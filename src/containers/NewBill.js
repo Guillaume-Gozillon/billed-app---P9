@@ -1,37 +1,54 @@
-
 import { ROUTES_PATH } from '../constants/routes.js'
 import Logout from "./Logout.js"
 
 export default class NewBill {
   constructor({ document, onNavigate, firestore, localStorage }) {
+
     this.document = document
     this.onNavigate = onNavigate
     this.firestore = firestore
+
     const formNewBill = this.document.querySelector(`form[data-testid="form-new-bill"]`)
     formNewBill.addEventListener("submit", this.handleSubmit)
+
     const file = this.document.querySelector(`input[data-testid="file"]`)
     file.addEventListener("change", this.handleChangeFile)
+
     this.fileUrl = null
     this.fileName = null
+
     new Logout({ document, localStorage, onNavigate })
   }
+
   handleChangeFile = e => {
     const file = this.document.querySelector(`input[data-testid="file"]`).files[0]
     const filePath = e.target.value.split(/\\/g)
-    const fileName = filePath[filePath.length-1]
-    this.firestore
-      .storage
-      .ref(`justificatifs/${fileName}`)
-      .put(file)
-      .then(snapshot => snapshot.ref.getDownloadURL())
-      .then(url => {
-        this.fileUrl = url
-        this.fileName = fileName
-      })
+    const fileName = filePath[filePath.length - 1]
+
+    if (
+      fileName.slice(-4).includes('.png') ||
+      fileName.slice(-4).includes('.jpg') ||
+      fileName.slice(-5).includes('.jpeg')
+      ) {
+        this.firestore
+        .storage
+        .ref(`justificatifs/${fileName}`)
+        .put(file)
+        .then(snapshot => snapshot.ref.getDownloadURL())
+        .then(url => {
+          this.fileUrl = url
+          this.fileName = fileName
+        }) 
+    } else {
+        e.target.value = ''
+    }
   }
+
   handleSubmit = e => {
     e.preventDefault()
-    console.log('e.target.querySelector(`input[data-testid="datepicker"]`).value', e.target.querySelector(`input[data-testid="datepicker"]`).value)
+
+    if (this.fileName === '') return null;
+
     const email = JSON.parse(localStorage.getItem("user")).email
     const bill = {
       email,
@@ -46,6 +63,7 @@ export default class NewBill {
       fileName: this.fileName,
       status: 'pending'
     }
+
     this.createBill(bill)
     this.onNavigate(ROUTES_PATH['Bills'])
   }
