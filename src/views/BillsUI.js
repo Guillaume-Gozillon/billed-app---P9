@@ -4,7 +4,7 @@ import LoadingPage from "./LoadingPage.js"
 
 import Actions from './Actions.js'
 
-const row = (bill) => {
+const row = bill => {
   return (`
     <tr>
       <td>${bill.type}</td>
@@ -19,16 +19,16 @@ const row = (bill) => {
     `)
   }
 
-  const rows = (data) => {
+  const rows = data => {
     const sortedData =
       data && data.length
         ? data.sort((a, b) => new Date(b.date) - new Date(a.date))
-        : '';
+        : ''
   
     return data && data.length
       ? sortedData.map((bill) => row(bill)).join('')
-      : '';
-  };
+      : ''
+  }
 
 export default ({ data: bills, loading, error }) => {
   
