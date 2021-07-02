@@ -9,6 +9,7 @@ describe("Given I am connected as an employee", () => {
       document.body.innerHTML = html
       //to-do write expect expression
     })
+    // Test si les dates sont triées par ordre décroissant
     test("Then bills should be ordered from earliest to latest", () => {
       const html = BillsUI({ data: bills })
       document.body.innerHTML = html

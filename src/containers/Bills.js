@@ -2,6 +2,7 @@
 import { ROUTES_PATH } from '../constants/routes.js'
 import { formatDate, formatStatus } from "../app/format.js"
 import Logout from "./Logout.js"
+import BillsUI from "../views/BillsUI.js"
 
 export default class {
   constructor({ document, onNavigate, firestore, localStorage }) {
@@ -18,6 +19,8 @@ export default class {
     })
 
     new Logout({ document, localStorage, onNavigate })
+
+    console.log(BillsUI);
   }
 
   handleClickNewBill = e => {
