@@ -63,7 +63,41 @@ describe("Given I am connected as an employee", () => {
 		expect(message).toBeTruthy()
 	})
 
-})
-
   // test click on new bill button
+  describe('When I click on the Create a new bill button', () => {
+		test('Then I should be sent to the NewBill page', () => {
+			const html = BillsUI({ data: [] })
+			document.body.innerHTML = html
+			const onNavigate = (pathname) => {
+				document.body.innerHTML = ROUTES({ pathname })
+			}
+			const bills = new Bills({ document, onNavigate, firestore: null, localStorage: window.localStorage })
+			const button = screen.getByTestId('btn-new-bill')
+			const handleClickNewBill = jest.fn((e) => bills.handleClickNewBill(e))
+			button.addEventListener('click', handleClickNewBill)
+			fireEvent.click(button)
+			expect(handleClickNewBill).toHaveBeenCalled()
+		})
+	})
+
   // test click on eye button
+  describe('When I click on the Eye Icon button', () => {
+		test('Then a modal should open', async () => {
+			const html = BillsUI({ data: bills })
+			document.body.innerHTML = html
+			const onNavigate = (pathname) => {
+				document.body.innerHTML = ROUTES({ pathname })
+			}
+			const bill = new Bills({ document, onNavigate, firestore: null, localStorage: window.localStorage, })
+			$.fn.modal = jest.fn()
+			const button = screen.getAllByTestId('icon-eye')[0]
+			const handleClickIconEye = jest.fn((e) => {
+				e.preventDefault()
+				bill.handleClickIconEye(button)
+			})
+			button.addEventListener('click', handleClickIconEye)
+			fireEvent.click(button)
+			expect(handleClickIconEye).toHaveBeenCalled()
+		})
+	})
+})
