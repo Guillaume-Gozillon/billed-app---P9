@@ -1,6 +1,9 @@
-import { screen } from "@testing-library/dom"
+import { fireEvent, screen } from "@testing-library/dom"
 import BillsUI from "../views/BillsUI.js"
 import { bills } from "../fixtures/bills.js"
+import '@testing-library/jest-dom/extend-expect'
+import Bills  from "../containers/Bills.js"
+import { ROUTES } from "../constants/routes"
 import firebase from "../__mocks__/firebase"
 
 describe("Given I am connected as an employee", () => {
@@ -27,7 +30,6 @@ describe("Given I am connected as an employee", () => {
     document.body.innerHTML = html
     // Attend une valeur retour du DOM, verifie que le contenu est TRUE
     expect(screen.getAllByText('Loading...')).toBeTruthy()
-    console.log(screen.getAllByText('Loading...'));
   })
   // test error page
   test('Then, Error page should be rendered', () => {
@@ -42,6 +44,25 @@ describe("Given I am connected as an employee", () => {
 		expect(getSpy).toHaveBeenCalledTimes(1)
 		expect(bills.data.length).toBe(4)
 	})
+	test('fetches bills from an API and fails with 404 message error', async () => {
+		firebase.get.mockImplementationOnce(() =>
+			Promise.reject(new Error('Erreur 404'))
+		)
+		const html = BillsUI({ error: 'Erreur 404' })
+		document.body.innerHTML = html;
+		const message = await screen.getByText(/Erreur 404/)
+		expect(message).toBeTruthy()
+	})
+	test('fetches messages from an API and fails with 500 message error', async () => {
+		firebase.get.mockImplementationOnce(() =>
+			Promise.reject(new Error('Erreur 500'))
+		)
+		const html = BillsUI({ error: 'Erreur 500' })
+		document.body.innerHTML = html
+		const message = await screen.getByText(/Erreur 500/)
+		expect(message).toBeTruthy()
+	})
+
 })
 
   // test click on new bill button

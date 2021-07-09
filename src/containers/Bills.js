@@ -20,10 +20,12 @@ export default class {
     new Logout({ document, localStorage, onNavigate })
   }
 
+  // Tester lévénement du bouton qui créer une nouvelle note
   handleClickNewBill = e => {
     this.onNavigate(ROUTES_PATH['NewBill'])
   }
 
+  // Teste l'event de l'icone qui, au click, permet la visualisation de l'img
   handleClickIconEye = icon => {
     const billUrl = icon.getAttribute("data-bill-url")
     const imgWidth = Math.floor($('#modaleFile').width() * 0.5)
