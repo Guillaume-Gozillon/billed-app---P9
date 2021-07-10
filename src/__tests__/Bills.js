@@ -12,6 +12,7 @@ describe("Given I am connected as an employee", () => {
       const html = BillsUI({ data: []})
       document.body.innerHTML = html
     })
+  
     // Test si les dates sont triées par ordre décroissant
     test("Then bills should be ordered from earliest to latest", () => {
       const html = BillsUI({ data: bills })
@@ -31,12 +32,14 @@ describe("Given I am connected as an employee", () => {
     // Attend une valeur retour du DOM, verifie que le contenu est TRUE
     expect(screen.getAllByText('Loading...')).toBeTruthy()
   })
+
   // test error page
   test('Then, Error page should be rendered', () => {
     const html = BillsUI({ error: 'some error message' })
     document.body.innerHTML = html
     expect(screen.getAllByText('Erreur')).toBeTruthy()
   })
+
   // test d'intégration GET
   test('fetches bills from mock API GET', async () => {
 		const getSpy = jest.spyOn(firebase, 'get')
@@ -44,22 +47,24 @@ describe("Given I am connected as an employee", () => {
 		expect(getSpy).toHaveBeenCalledTimes(1)
 		expect(bills.data.length).toBe(4)
 	})
+
 	test('fetches bills from an API and fails with 404 message error', async () => {
 		firebase.get.mockImplementationOnce(() =>
 			Promise.reject(new Error('Erreur 404'))
 		)
 		const html = BillsUI({ error: 'Erreur 404' })
 		document.body.innerHTML = html;
-		const message = await screen.getByText(/Erreur 404/)
+		const message = screen.getByText(/Erreur 404/)
 		expect(message).toBeTruthy()
 	})
+
 	test('fetches messages from an API and fails with 500 message error', async () => {
 		firebase.get.mockImplementationOnce(() =>
 			Promise.reject(new Error('Erreur 500'))
 		)
 		const html = BillsUI({ error: 'Erreur 500' })
 		document.body.innerHTML = html
-		const message = await screen.getByText(/Erreur 500/)
+		const message = screen.getByText(/Erreur 500/)
 		expect(message).toBeTruthy()
 	})
 
@@ -68,12 +73,15 @@ describe("Given I am connected as an employee", () => {
 		test('Then I should be sent to the NewBill page', () => {
 			const html = BillsUI({ data: [] })
 			document.body.innerHTML = html
-			const onNavigate = (pathname) => {
-				document.body.innerHTML = ROUTES({ pathname })
-			}
-			const bills = new Bills({ document, onNavigate, firestore: null, localStorage: window.localStorage })
+			const onNavigate = pathname => {
+				document.body.innerHTML = ROUTES({ pathname })}
+			const bills = new Bills({ 
+        document, onNavigate, 
+        firestore: null, 
+        localStorage: window.localStorage })
 			const button = screen.getByTestId('btn-new-bill')
-			const handleClickNewBill = jest.fn((e) => bills.handleClickNewBill(e))
+			const handleClickNewBill = jest.fn(e => bills.handleClickNewBill(e))
+
 			button.addEventListener('click', handleClickNewBill)
 			fireEvent.click(button)
 			expect(handleClickNewBill).toHaveBeenCalled()
@@ -88,13 +96,17 @@ describe("Given I am connected as an employee", () => {
 			const onNavigate = (pathname) => {
 				document.body.innerHTML = ROUTES({ pathname })
 			}
-			const bill = new Bills({ document, onNavigate, firestore: null, localStorage: window.localStorage, })
+			const bill = new Bills({ 
+        document, onNavigate, 
+        firestore: null, 
+        localStorage: window.localStorage, })
 			$.fn.modal = jest.fn()
 			const button = screen.getAllByTestId('icon-eye')[0]
-			const handleClickIconEye = jest.fn((e) => {
+			const handleClickIconEye = jest.fn(e => {
 				e.preventDefault()
 				bill.handleClickIconEye(button)
 			})
+  
 			button.addEventListener('click', handleClickIconEye)
 			fireEvent.click(button)
 			expect(handleClickIconEye).toHaveBeenCalled()

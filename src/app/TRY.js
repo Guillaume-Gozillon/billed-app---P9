@@ -1,121 +1,84 @@
 import { fireEvent, screen } from "@testing-library/dom"
-import '@testing-library/jest-dom/extend-expect'
-import BillsUI from "../views/BillsUI.js"
-import { bills } from "../fixtures/bills.js"
-import Bills  from "../containers/Bills.js"
-import { ROUTES } from "../constants/routes"
+import NewBillUI from "../views/NewBillUI.js"
+import NewBill from "../containers/NewBill.js"
+import { localStorageMock } from "../__mocks__/localStorage.js"
 import firebase from "../__mocks__/firebase"
+import { ROUTES } from "../constants/routes"
 
 describe("Given I am connected as an employee", () => {
-  describe("When I am on Bills Page", () => {
-    test("Then bill icon in vertical layout should be highlighted", () => {
-      const html = BillsUI({ data: []})
-      document.body.innerHTML = html
-    })
-
-	// test si les dates sont bien trier dans l'odre décroissant
-    test("Then bills should be ordered from earliest to latest", () => {
-      const html = BillsUI({ data: bills })
-      document.body.innerHTML = html
-
-      const dates = screen.getAllByText(/^(19|20)\d\d[- /.](0[1-9]|1[012])[- /.](0[1-9]|[12][0-9]|3[01])$/i).map(a => a.innerHTML)
-      const antiChrono = (a, b) => ((a < b) ? 1 : -1)
-      const datesSorted = [...dates].sort(antiChrono)
-
-      expect(dates).toEqual(datesSorted)
-    })
-
-	// test loading page
-    test('Then, Loading page should be rendered', () => {
-      const html = BillsUI({ loading: true })
-      document.body.innerHTML = html
-
-      expect(screen.getAllByText('Loading...')).toBeTruthy()
-    })
-
-	// test error page
-    test('Then, Error page should be rendered', () => {
-      const html = BillsUI({ error: 'some error message' })
-      document.body.innerHTML = html
-      expect(screen.getAllByText('Erreur')).toBeTruthy()
-    })
-
-	// test d'intégration GET
-	test('fetches bills from mock API GET', async () => {
-		const getSpy = jest.spyOn(firebase, 'get')
-		const bills = await firebase.get()
-		expect(getSpy).toHaveBeenCalledTimes(1)
-		expect(bills.data.length).toBe(4)
-	})
-
-	test('fetches bills from an API and fails with 404 message error', async () => {
-		firebase.get.mockImplementationOnce(() =>
-			Promise.reject(new Error('Erreur 404'))
-		)
-		const html = BillsUI({ error: 'Erreur 404' })
-		document.body.innerHTML = html;
-
-		const message = screen.getByText(/Erreur 404/)
-		expect(message).toBeTruthy()
-	})
-
-	test('fetches messages from an API and fails with 500 message error', async () => {
-		firebase.get.mockImplementationOnce(() =>
-			Promise.reject(new Error('Erreur 500'))
-		)
-		const html = BillsUI({ error: 'Erreur 500' })
-		document.body.innerHTML = html
-		const message = screen.getByText(/Erreur 500/)
-		expect(message).toBeTruthy()
-	})
-  })
-
-  // test click on new bill button
-  describe('When I click on the Create a new bill button', () => {
-		test('Then I should be sent to the NewBill page', () => {
-			const html = BillsUI({ data: [] })
+	describe("When I am on NewBill Page", () => {
+		test("Then ...", () => {
+			const html = NewBillUI()
 			document.body.innerHTML = html
-			const onNavigate = pathname => {
-				document.body.innerHTML = ROUTES({ pathname })
-			}
-			const bills = new Bills({
-				document, 
-				onNavigate, 
-				firestore: null, 
-				localStorage: window.localStorage })
-			const button = screen.getByTestId('btn-new-bill')
-
-			const handleClickNewBill = jest.fn(e => bills.handleClickNewBill(e))
-			button.addEventListener('click', handleClickNewBill)
-
-			fireEvent.click(button)
-			expect(handleClickNewBill).toHaveBeenCalled()
+			//to-do write assertion
 		})
-	})
-
-	// test click on eye button
-	describe('When I click on the Eye Icon button', () => {
-		test('Then a modal should open', async () => {
-			const html = BillsUI({ data: bills })
+		// test handleChangeFile
+		test("cover handleChangeFile method", () => {
+			const html = NewBillUI()
 			document.body.innerHTML = html
-			const onNavigate = pathname => {
+
+			Object.defineProperty(window, 'localStorage', { value: localStorageMock})
+			window.localStorage.setItem('user', JSON.stringify({
+				type: 'Employee',
+				email: 'johndoe@email.com'
+			}))
+
+			const onNavigate = (pathname) => {
 				document.body.innerHTML = ROUTES({ pathname })
 			}
-			const bill = new Bills({
-				document, 
-				onNavigate, 
-				firestore: null, 
-				localStorage: window.localStorage })
-			$.fn.modal = jest.fn()
-			const button = screen.getAllByTestId('icon-eye')[0]
 
-			const handleClickIconEye = jest.fn(e => {
-				e.preventDefault()
-				bill.handleClickIconEye(button)})
-			button.addEventListener('click', handleClickIconEye)
+			const obj = new NewBill({ document, onNavigate, firestore: null, localStorage: window.localStorage })
+			const handleChangeFile = jest.fn(obj.handleChangeFile)
+			const file = "test.png"
+			const input_file = screen.getByTestId("file")
+			input_file.addEventListener("input", handleChangeFile)
+			fireEvent.input(input_file, file)
+			expect(handleChangeFile).toHaveBeenCalled()
+		})
+		// test handleSubmit
+		test("cover handleSubmit method", () => {
+			const html = NewBillUI()
+			document.body.innerHTML = html
 
-			fireEvent.click(button)
-			expect(handleClickIconEye).toHaveBeenCalled()
+			Object.defineProperty(window, 'localStorage', { value: localStorageMock})
+			window.localStorage.setItem('user', JSON.stringify({
+				type: 'Employee',
+				email: 'johndoe@email.com'
+			}))
+
+			const onNavigate = (pathname) => {
+				document.body.innerHTML = ROUTES({ pathname })
+			}
+
+			const obj = new NewBill({ document, onNavigate, firestore: null, localStorage: window.localStorage })
+			const handleSubmit = jest.fn(obj.handleSubmit)
+			const submitNewBill = screen.getByTestId('form-new-bill')
+			submitNewBill.addEventListener("submit", handleSubmit)
+			fireEvent.submit(submitNewBill)
+			expect(handleSubmit).toHaveBeenCalled()
+		})
+		// test d'intégration POST
+		describe("Given I am a user connected as an Employee", () => {
+			describe("When I submit new bill", () => {
+				test("POST bill to mock API", async () => {
+					const newBill = {
+						"pct": 20,
+						"amount": 200,
+						"email": "a@a",
+						"name": "test post",
+						"vat": "40",
+						"fileName": "preview-facture-free-201801-pdf-1.jpg",
+						"date": "2002-02-02",
+						"commentary": "test2",
+						"type": "Restaurants et bars",
+						"fileUrl": "https://firebasestorage.googleapis.com/v0/b/billable-677b6.a…f-1.jpg?alt=media&token=4df6ed2c-12c8-42a2-b013-346c1346f732"
+					}
+					const postSpy = jest.spyOn(firebase, "post")
+					const postBill = await firebase.post(newBill)
+					expect(postSpy).toHaveBeenCalledTimes(1)
+					expect(postBill).toBe("Bill test post received.")
+				})
+			})
 		})
 	})
 })
