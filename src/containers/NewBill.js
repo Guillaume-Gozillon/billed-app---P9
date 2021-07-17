@@ -30,15 +30,14 @@ export default class NewBill {
       fileName.slice(-4).includes('.jpg') ||
       fileName.slice(-5).includes('.jpeg')
       ) {
-        this.firestore
-        .storage
-        .ref(`justificatifs/${fileName}`)
-        .put(file)
-        .then(snapshot => snapshot.ref.getDownloadURL())
-        .then(url => {
-          this.fileUrl = url
-          this.fileName = fileName
-        }) 
+        this.firestore.storage
+          .ref(`justificatifs/${fileName}`)
+          .put(file)
+          .then(snapshot => snapshot.ref.getDownloadURL())
+          .then(url => {
+            this.fileUrl = url
+            this.fileName = fileName
+          }) 
     } else {
         e.target.value = ''
     }
@@ -47,21 +46,24 @@ export default class NewBill {
   handleSubmit = e => {
     e.preventDefault()
 
-    if (this.fileName === '') return null;
+    if (this.fileName === '') return null
 
     const email = JSON.parse(localStorage.getItem("user")).email
+
     const bill = {
-      email,
-      type: e.target.querySelector(`select[data-testid="expense-type"]`).value,
-      name:  e.target.querySelector(`input[data-testid="expense-name"]`).value,
-      amount: parseInt(e.target.querySelector(`input[data-testid="amount"]`).value),
-      date:  e.target.querySelector(`input[data-testid="datepicker"]`).value,
-      vat: e.target.querySelector(`input[data-testid="vat"]`).value,
-      pct: parseInt(e.target.querySelector(`input[data-testid="pct"]`).value) || 20,
-      commentary: e.target.querySelector(`textarea[data-testid="commentary"]`).value,
-      fileUrl: this.fileUrl,
-      fileName: this.fileName,
-      status: 'pending'
+      "id": "47qAXb6fIm2zOKkLzMro",
+      "vat": "80",
+      "fileUrl": "https://firebasestorage.googleapis.com/v0/b/billable-677b6.a…f-1.jpg?alt=media&token=c1640e12-a24b-4b11-ae52-529112e9602a",
+      "status": "pending",
+      "type": "Hôtel et logement",
+      "commentary": "séminaire billed",
+      "name": "encore",
+      "fileName": "preview-facture-free-201801-pdf-1.jpg",
+      "date": "2004-04-04",
+      "amount": 400,
+      "commentAdmin": "ok",
+      "email": "a@a",
+      "pct": 20
     }
 
     this.createBill(bill)
@@ -69,7 +71,7 @@ export default class NewBill {
   }
 
   // not need to cover this function by tests
-  createBill = (bill) => {
+  createBill = bill => {
     if (this.firestore) {
       this.firestore
       .bills()

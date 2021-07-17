@@ -128,7 +128,7 @@ export default class {
   handleEditTicket(e, bill, bills) {
 		// CORRECTION : [Bug Hunt] - Dashboard
 		this.id = bill.id
-		bills.forEach((b) => {
+		bills.forEach(b => {
 			$(`#open-bill${b.id}`).css({ background: '#0D5AE5' });
 		})
 
@@ -205,7 +205,7 @@ export default class {
   }
     
   // not need to cover this function by tests
-  updateBill = (bill) => {
+  updateBill = bill => {
     if (this.firestore) {
     return this.firestore
       .bill(bill.id)
