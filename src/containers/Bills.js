@@ -9,10 +9,14 @@ export default class {
     this.onNavigate = onNavigate
     this.firestore = firestore
 
-    const buttonNewBill = document.querySelector(`button[data-testid="btn-new-bill"]`)
-    if (buttonNewBill) buttonNewBill.addEventListener('click', this.handleClickNewBill)
+    const buttonNewBill = document.querySelector(`button[id="btn-new-bill"]`)
+    // FAIRE LE SPY
+    if (buttonNewBill) {
+      buttonNewBill.addEventListener('click', this.handleClickNewBill)
+    }
   
     const iconEye = document.querySelectorAll(`div[data-testid="icon-eye"]`)
+    // FAIRE LE SPY
     if (iconEye) iconEye.forEach(icon => {
       icon.addEventListener('click', (e) => this.handleClickIconEye(icon))
     })
@@ -37,7 +41,7 @@ export default class {
   }
 
   // not need to cover this function by tests
-   /* istanbul ignore next */
+  /* istanbul ignore next */
   getBills = () => {
     const userEmail = localStorage.getItem('user') 
       ? JSON.parse(localStorage.getItem('user')).email 

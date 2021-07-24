@@ -50,7 +50,7 @@ describe("Given I am connected as an employee", () => {
 				email: 'johndoe@email.com'
 			}))
 
-			const onNavigate = (pathname) => {
+			const onNavigate = pathname => {
 				document.body.innerHTML = ROUTES({ pathname })
 			}
 
@@ -67,7 +67,6 @@ describe("Given I am connected as an employee", () => {
 			describe("When I submit new bill", () => {
 				test("POST bill to mock API", async () => {
 					const newBill = {
-						"pct": 20,
 						"amount": 200,
 						"email": "a@a",
 						"name": "test post",
@@ -80,10 +79,11 @@ describe("Given I am connected as an employee", () => {
 					}
 					const postSpy = jest.spyOn(firebase, "post")
 					const postBill = await firebase.post(newBill)
+
 					expect(postSpy).toHaveBeenCalledTimes(1)
 					expect(postBill).toBe("Bill test post received.")
 				})
 			})
 		})
-  })
+  	})
 })

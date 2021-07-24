@@ -63,7 +63,7 @@ export default {
       }]
     })
   },
-  post: (newBill) => {
+  post: newBill => {
     return Promise.resolve("Bill "+newBill.name+" received.")
   }
 }

@@ -46,7 +46,7 @@ describe('Given I am connected as an Admin', () => {
   describe('When I am on Dashboard page and I click on arrow', () => {
     test('Then, tickets list should be unfolding, and cars should contain first and lastname', async () => {
       
-      const onNavigate = (pathname) => {
+      const onNavigate = pathname => {
         document.body.innerHTML = ROUTES({ pathname })
       }
 
@@ -103,8 +103,10 @@ describe('Given I am connected as an Admin', () => {
 
       const handleEditTicket = jest.fn((e) => dashboard.handleEditTicket(e, bills[0], bills))   
       const iconEdit = screen.getByTestId('open-bill47qAXb6fIm2zOKkLzMro')
+
       iconEdit.addEventListener('click', handleEditTicket)
       userEvent.click(iconEdit)
+
       expect(handleEditTicket).toHaveBeenCalled()
       userEvent.click(iconEdit)
       expect(handleEditTicket).toHaveBeenCalled()
@@ -131,7 +133,7 @@ describe('Given I am connected as Admin, and I am on Dashboard page, and I click
       }))
       const html = DashboardFormUI(bills[0])
       document.body.innerHTML = html
-      const onNavigate = (pathname) => {
+      const onNavigate = pathname => {
         document.body.innerHTML = ROUTES({ pathname })
       }
       const firestore = null
@@ -141,9 +143,12 @@ describe('Given I am connected as Admin, and I am on Dashboard page, and I click
 
       const acceptButton = screen.getByTestId("btn-accept-bill-d")
       const handleAcceptSubmit = jest.fn((e) => dashboard.handleAcceptSubmit(e, bills[0]))
+
       acceptButton.addEventListener("click", handleAcceptSubmit)
       fireEvent.click(acceptButton)
+
       expect(handleAcceptSubmit).toHaveBeenCalled()
+
       const bigBilledIcon = screen.queryByTestId("big-billed-icon")
       expect(bigBilledIcon).toBeTruthy()
     })
@@ -156,7 +161,7 @@ describe('Given I am connected as Admin, and I am on Dashboard page, and I click
       }))
       const html = DashboardFormUI(bills[0])
       document.body.innerHTML = html
-      const onNavigate = (pathname) => {
+      const onNavigate = pathname => {
         document.body.innerHTML = ROUTES({ pathname })
       }
       const firestore = null
@@ -164,9 +169,11 @@ describe('Given I am connected as Admin, and I am on Dashboard page, and I click
         document, onNavigate, firestore, bills, localStorage: window.localStorage
       })
       const refuseButton = screen.getByTestId("btn-refuse-bill-d")
-      const handleRefuseSubmit = jest.fn((e) => dashboard.handleRefuseSubmit(e, bills[0]))
+      const handleRefuseSubmit = jest.fn(e => dashboard.handleRefuseSubmit(e, bills[0]))
+
       refuseButton.addEventListener("click", handleRefuseSubmit)
       fireEvent.click(refuseButton)
+      
       expect(handleRefuseSubmit).toHaveBeenCalled()
       const bigBilledIcon = screen.queryByTestId("big-billed-icon")
       expect(bigBilledIcon).toBeTruthy()
