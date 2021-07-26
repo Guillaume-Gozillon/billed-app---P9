@@ -1,13 +1,10 @@
-
 import { fireEvent, screen } from '@testing-library/dom';
 import NewBillUI from '../views/NewBillUI.js';
 import NewBill from '../containers/NewBill.js';
 import '@testing-library/jest-dom';
 import { localStorageMock } from '../__mocks__/localStorage';
-import BillsUI from '../views/BillsUI.js';
 import { ROUTES } from '../constants/routes';
 import firebase from '../__mocks__/firebase';
-
 
 describe("Given I am connected as an employee", () => {
   describe("When I am on NewBill Page", () => {
@@ -16,6 +13,7 @@ describe("Given I am connected as an employee", () => {
       document.body.innerHTML = html
       //to-do write assertion
     })
+
     // test handleChangeFile
     test("cover handleChangeFile method", () => {
 			const html = NewBillUI()
@@ -33,12 +31,15 @@ describe("Given I am connected as an employee", () => {
 
 			const obj = new NewBill({ document, onNavigate, firestore: null, localStorage: window.localStorage })
 			const handleChangeFile = jest.fn(obj.handleChangeFile)
+
 			const file = "test.png"
 			const input_file = screen.getByTestId("file")
+	
 			input_file.addEventListener("input", handleChangeFile)
 			fireEvent.input(input_file, file)
 			expect(handleChangeFile).toHaveBeenCalled()
 		})
+
     // test handleSubmit
     test("cover handleSubmit method", () => {
 			const html = NewBillUI()
@@ -57,10 +58,17 @@ describe("Given I am connected as an employee", () => {
 			const obj = new NewBill({ document, onNavigate, firestore: null, localStorage: window.localStorage })
 			const handleSubmit = jest.fn(obj.handleSubmit)
 			const submitNewBill = screen.getByTestId('form-new-bill')
+
 			submitNewBill.addEventListener("submit", handleSubmit)
 			fireEvent.submit(submitNewBill)
 			expect(handleSubmit).toHaveBeenCalled()
+
+			const handleChangeFile = jest.fn(obj.handleSubmit)
+			if (handleChangeFile.fileName === '') {
+				expect(handleChangeFile.fileName).toBe(null)
+			}
 		})
+
     // test d'intégration POST
     // méthod POST init dans la firebase
     describe("Given I am a user connected as an Employee", () => {
