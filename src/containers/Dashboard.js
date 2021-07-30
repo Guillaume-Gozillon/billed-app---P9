@@ -126,7 +126,6 @@ export default class {
   */
 
   handleEditTicket(e, bill, bills) {
-		// CORRECTION : [Bug Hunt] - Dashboard
 		this.id = bill.id
 		bills.forEach(b => {
 			$(`#open-bill${b.id}`).css({ background: '#0D5AE5' });
